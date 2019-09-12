@@ -10,7 +10,12 @@ import model.entities.Reservation;
 
 public class Program {
 
-	public static void main(String[] args) throws ParseException {
+public static void main(String[] args) throws ParseException {
+		
+		/* ----- Coisas novas aprendidas -----
+		 * 		checkIn.before(now) e checkIn.after(now)
+		 * 
+		 */
 		
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
@@ -26,6 +31,7 @@ public class Program {
 		show("Check-out date (dd/MM/yyyy): ");
 		Date checkOut = sdf.parse(sc.next());
 		
+		//Se saida nao for depois de entrada, entra na mensagem de erro 
 		if(!checkOut.after(checkIn)) {
 			System.out.println("Error in reservation: Check-out date must be after check-in date");
 		}else {
@@ -41,20 +47,17 @@ public class Program {
 			show("Check-out date (dd/MM/yyyy): ");
 			checkOut = sdf.parse(sc.next());
 			
-			Date now = new Date();	//cria uma data pegando do sistema
-			if(checkIn.before(now) || checkOut.before(now)) {
-				showln("Error in reservation: Reservation dates for update must be future dates");
-			}else if(!checkOut.after(checkIn)) {
-				System.out.println("Error in reservation: Check-out date must be after check-in date");
+			//mostra a entrada e saida atualizada
+			String error = reservation.updateDates(checkIn, checkOut);
+			
+			if(error != null) {
+				showln("Error in reservation: " + error);
 			}else {
-				reservation.updateDates(checkIn, checkOut);
 				showln("Reservation: " + reservation);
 			}
 			
 		}
-		
-		
-		
+			
 		sc.close();
 	}
 	
