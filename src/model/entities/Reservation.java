@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import model.exceptions.DomainExceptions;
+
 public class Reservation {
 
 	/* 		----- Coisas novas aprendidas -----
@@ -18,7 +20,13 @@ public class Reservation {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
-	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
+	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) throws DomainExceptions{
+		
+		if(!checkOut.after(checkIn)){
+			//se saida nao for depois da entrada, mostra mensagem de erro
+			throw new DomainExceptions("Check-out date must be after check-in date");
+		}
+		
 		this.roomNumber = roomNumber;
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
@@ -45,22 +53,22 @@ public class Reservation {
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}
 	
-	public String updateDates(Date checkIn, Date checkOut) {
+	//Metodo vai propagar/lançar o erro para o main, onde lá vai ser tratado o erro
+	public void updateDates(Date checkIn, Date checkOut) throws DomainExceptions{
 		
 		Date now = new Date();	//cria uma data pegando do sistema
 		//se entrada ou saida for antes da data do sistema, entra na mensagem de erro
 		if(checkIn.before(now) || checkOut.before(now)) {
-			return "Reservation dates for update must be future dates";
+			throw new DomainExceptions("Reservation dates for update must be future dates");
 		}
 		if(!checkOut.after(checkIn)) {
 			//se saida nao for depois da entrada, mostra mensagem de erro
-			return "Check-out date must be after check-in date";
+			throw new DomainExceptions("Check-out date must be after check-in date");
 		}
 		
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
 		
-		return null;
 	}
 	
 	@Override
